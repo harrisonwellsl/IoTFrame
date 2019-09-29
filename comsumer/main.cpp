@@ -172,7 +172,8 @@ int main(int argc, char** argv) {
 	system("pause");
 	// 初始化消费者
 	consumer.Init(ip_addr_buffer, user_buffer,
-		password_buffer, db_name_buffer, (int)atof(db_port_buffer), encode_buffer);
+		password_buffer, db_name_buffer,
+		(int)atof(db_port_buffer), encode_buffer);
 
 	// 输入q可退出程序
 	std::cout << "Press 'q' to quit" << std::endl;

@@ -1,3 +1,4 @@
+#include <thread>
 #include "Consumer.h"
 #include "JsonParseConsumer.h"
 #include "MySQLModule.h"
@@ -141,17 +142,16 @@ void Consumer::onMessage(const cms::Message* message) {
 			message->acknowledge();
 		}
 
+		std::cout << text << std::endl;
 		// 静态成员函数枚举收到的消息内容
 		JsonParseConsumer::EnumContent(text);
-		//std::cout << JsonParseConsumer::InsertMySQL(text) << std::endl;
+
 		// 获取生成的字符串
 		this->mysql_module->ExcuteQuery(JsonParseConsumer::CreateTableForMySQL(text));
 		this->mysql_module->ExcuteQuery(JsonParseConsumer::InsertMySQL(text));
-		//std::cout << sql_str << std::endl;
-		// 执行SQL语句
-		//this->mysql_module->ExcuteQuery(sql_str);
 
 		printf("Message #%d Received: %s\n", count, text.c_str());
+		std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	}
 	catch (cms::CMSException& e) {
 		e.printStackTrace();
@@ -160,7 +160,7 @@ void Consumer::onMessage(const cms::Message* message) {
 
 void Consumer::onException(const cms::CMSException& ex AMQCPP_UNUSED) {
 	printf("CMS Exception occurred.  Shutting down client.\n");
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 void Consumer::onException(const decaf::lang::Exception& ex) {

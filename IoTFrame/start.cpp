@@ -120,6 +120,10 @@ int main(int argc, char** argv) {
 	std::vector<std::thread*> thread_vector;
 	sockaddr_in* client_info = nullptr;
 	SOCKET* socket_client = nullptr;
+	char broker_uri[256] = { '\0' };
+	puts("Enter the broker uri like \"192.168.56.101:61616\": ");
+	fgets(broker_uri, 256, stdin);
+	broker_uri[strlen(broker_uri) - 1] = '\0';
 	for (int i = 0; i < 1000; i++) {
 		// 动态分配内存用于存储客户端信息和建立客户端套接字
 		client_info = new sockaddr_in;
@@ -162,7 +166,7 @@ int main(int argc, char** argv) {
 
 		socket_vector.push_back(socket_client);
 
-		std::thread* task = new std::thread(ThreadFunc, socket_client, id, *client_info);
+		std::thread* task = new std::thread(ThreadFunc, socket_client, id, *client_info, broker_uri);
 		thread_vector.push_back(task);
 		task->detach();
 

@@ -2,6 +2,10 @@
 
 #include <mysql.h>
 
+// 该类为与MySQL数据库进行交互使用的数据库
+// 包括初始化
+// 连接
+// 执行MySQL语句
 class MySQLModule {
 private:
 	MYSQL* mysql_data;

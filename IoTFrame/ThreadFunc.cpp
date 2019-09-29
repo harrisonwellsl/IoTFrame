@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <document.h>
 #include <decaf/lang/Thread.h>
 #include <decaf/lang/Runnable.h>
@@ -25,16 +26,18 @@
 #include "JsonParse.h"
 #include "Producer.h"
 
-void ThreadFunc(SOCKET* client_socket, int id, sockaddr_in client_info) {
+void ThreadFunc(SOCKET* client_socket, int id, sockaddr_in client_info, char* broker_uri_char) {
 	DataGet data_get(client_socket, id, client_info);
 	std::cout << "This is the id: " << data_get.GetId() << std::endl;
 	std::cout << "The remote client address is: " << data_get.GetClientAddrInfo() << std::endl;
 	std::cout << "The remote client port is: " << data_get.GetClientPortInfo() << std::endl;
 	std::string msg_from_client;
 
-	std::string broker_uri = "failover://(tcp://192.168.56.101:61616)";
+	std::string broker_uri = "failover://(tcp://";
+	broker_uri.append(broker_uri_char);
+	broker_uri.append(")");
 	std::string des_uri = "TEST.FOO";
-	//des_uri += data_get.GetClientPortInfo();
+	std::cout << "Broker uri is: " << broker_uri << std::endl;
 
 	activemq::library::ActiveMQCPP::initializeLibrary();
 	Producer producer(broker_uri, des_uri);
@@ -44,6 +47,8 @@ void ThreadFunc(SOCKET* client_socket, int id, sockaddr_in client_info) {
 		// 获取客户端发送的字符串数据
 		msg_from_client = data_get.GetMsgFromClient();
 		std::cout << msg_from_client << std::endl;
+		std::cout << "Message size = " << msg_from_client.size() << std::endl;
+		std::cout << "Message length = " << msg_from_client.length() << std::endl;
 
 		if (msg_from_client.empty()) {
 			// 产生空字符串的话就是客户端下线
